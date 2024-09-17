@@ -10,3 +10,25 @@
 # Output examples:
 # Triangle
 # Square
+
+number_of_sides = int(input("Sides: "))
+
+if number_of_sides == 3:
+    print("Triangle")
+elif number_of_sides == 4:
+    print("Square")
+elif number_of_sides == 5:
+    print("Pentagon")
+elif number_of_sides == 6:
+    print("Hexagon")
+elif number_of_sides == 7:
+    print("Heptagon")
+elif number_of_sides == 8:
+    print("Octagon")
+elif number_of_sides == 9:
+    print("Nonagon")
+elif number_of_sides == 10:
+    print("Decagon")
+else:
+    print("Amount of sides is out of range")
+    
