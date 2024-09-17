@@ -14,15 +14,16 @@
 while True:
     try:
         # Prompt the user to enter the cost of the meal
-        costOfMeal = float(input("Cost of the meal : "))
+        costOfMeal = (input("Enter cost of the meal (format 'Cost of the meal: xy.wz'): "))
+        cost = float(costOfMeal[18:24])
         break  # Exit the loop if a valid number is entered
     except ValueError:
         # Handle the case where the input is not a valid number
         print("Please enter a valid number.")
 
 # Calculate tax and tip
-tax = round(costOfMeal * 0.21, 3)
-tip = round(costOfMeal * 0.15, 3)
+tax = round(cost * 0.21, 3)
+tip = round(cost * 0.15, 3)
 
 # Output the tax, tip, and total cost
-print(f"Tax: {tax}, Tip: {tip}, Total: {round(costOfMeal + tax + tip, 3)}")
+print(f"Tax: {tax} , Tip: {tip} , Total: {round(cost + tax + tip, 3)}")
