@@ -1,5 +1,3 @@
-
-
 from datetime import datetime
 
 # Check if first name is valid
@@ -9,6 +7,7 @@ def is_name_valid(name: str) -> bool:
 
 # Check if last name is valid
 def is_last_name_valid(name: str) -> bool:
+    # Last names can contain spaces, each part should start with a capital letter and be alphabetic
     parts = name.split(" ")
     if len(name) < 2 or len(name) > 11:
         return False
@@ -16,21 +15,25 @@ def is_last_name_valid(name: str) -> bool:
 
 # Check if job title is valid
 def is_title_valid(title: str) -> bool:
+    # Ensure job title only contains letters, digits, and spaces, and is at least 10 characters
     return len(title) >= 10 and all(x.isalpha() or x.isspace() for x in title)
 
 # Check if salary is valid
-def is_salary_valid(salary: str) -> bool:
+def validate_salary(salary_input: str) -> bool:
     try:
-        salary_float = float(salary.replace(",", ""))
-        return 20000.00 <= salary_float <= 80000.00
+        # Convert European number format (comma as decimal separator)
+        salary = salary_input.replace(".", "").replace(",", ".")
+        float(salary)  # Try converting to float
+        return True
     except ValueError:
         return False
 
 # Check if date is valid
-def is_date_valid(date_str: str) -> bool:
+def validate_date(date_input: str) -> bool:
     try:
-        date = datetime.strptime(date_str, "%Y-%m-%d")
-        return date.year in [2021, 2022]
+        # This will raise a ValueError if the format is incorrect
+        datetime.strptime(date_input, '%Y-%m-%d')
+        return True
     except ValueError:
         return False
 
@@ -55,16 +58,16 @@ def main():
             if not is_name_valid(first_name):
                 print("Input error: Invalid first name.")
                 continue
-            if not is_name_valid(last_name):
+            if not is_last_name_valid(last_name):
                 print("Input error: Invalid last name.")
                 continue
             if not is_title_valid(job_title):
                 print("Input error: Invalid job title.")
                 continue
-            if not is_salary_valid(annual_salary):
+            if not validate_salary(annual_salary):
                 print("Input error: Invalid salary.")
                 continue
-            if not is_date_valid(start_date):
+            if not validate_date(start_date):
                 print("Input error: Invalid date.")
                 continue
 
@@ -88,7 +91,7 @@ def main():
             if not is_name_valid(first_name):
                 print("Input error: Invalid first name.")
                 continue
-            if not is_name_valid(last_name):
+            if not is_last_name_valid(last_name):
                 print("Input error: Invalid last name.")
                 continue
             if not is_title_valid(job_title):
