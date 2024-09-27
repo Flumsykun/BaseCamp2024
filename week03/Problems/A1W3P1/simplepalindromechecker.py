@@ -21,18 +21,8 @@ ik mocht geen gebruik maken van string slicing shortcuts
 en daar ben ik zoutig over
 """
 
-#ask the user to enter 3 strings in a list
-#empty string should not be a palindrome
-#initialize the list
-#strings = []
-
-#ask the user to enter 3 strings
-# for i in range(3):
-#     strings.append(input("String: "))
 string = input("String: ")
-#check if the string is a palindrome
-# for string in strings:
-    #remove punctuation marks
+
 string = ''.join(e for e in string if e.isalnum())
     #convert the string to lowercase
 string = string.lower()
@@ -48,13 +38,3 @@ else:
             print(f'"{string}" is a palindrome')
         else:
             print(f'"{string}" is not a palindrome')
-            
-    # elif string == string[::-1]:
-    #     print(f'"{string}" is a palindrome')
-    # else:
-    #     print(f'"{string}" is not a palindrome')
-        
-        #     else:
-        # print(f'"{string}" is not a palindrome')
-        # elif string == '':
-        #     print('Empty string is not a palindrome')
