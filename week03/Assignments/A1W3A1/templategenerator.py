@@ -14,7 +14,11 @@ def is_last_name_valid(name: str) -> bool:
 
 def is_title_valid(title: str) -> bool:
     """Check if job title is valid."""
-    return len(title) >= 10 and all(x.isalpha() or x.isspace() for x in title)
+    allowed_special_chars = {'+', '#', '-', '.'}
+    return (
+        len(title) >= 10 and
+        all(x.isalpha() or x.isspace() or x in allowed_special_chars for x in title)
+    )
 
 
 def is_salary_valid(salary_input: str) -> bool:
@@ -26,11 +30,21 @@ def is_salary_valid(salary_input: str) -> bool:
     except ValueError:
         return False
 
+# Validate if the date format is correct and if it's after the offer date 
+# (for job offers)
 
-def is_date_valid(date_input: str) -> bool:
-    """Check if date is valid."""
+
+def is_date_valid(date_input: str, compare_date: str = None) -> bool:
     try:
-        datetime.strptime(date_input, '%Y-%m-%d')
+        # Parse the input date
+        input_date = datetime.strptime(date_input, '%Y-%m-%d')
+        # If there's a compare_date (for example, the offer date), 
+        # check if the input date is after it
+        if compare_date:
+            comparison_date = datetime.strptime(compare_date, '%Y-%m-%d')
+            if input_date <= comparison_date:
+                return False  # The start date must be after the offer date
+
         return True
     except ValueError:
         return False
