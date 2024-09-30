@@ -30,21 +30,20 @@ def is_salary_valid(salary_input: str) -> bool:
     except ValueError:
         return False
 
-# Validate if the date format is correct and if it's after the offer date 
+
+# Validate if the date format is correct and if it's after the offer date
 # (for job offers)
 
 
 def is_date_valid(date_input: str, compare_date: str = None) -> bool:
     try:
-        # Parse the input date
         input_date = datetime.strptime(date_input, '%Y-%m-%d')
-        # If there's a compare_date (for example, the offer date), 
-        # check if the input date is after it
-        if compare_date:
-            comparison_date = datetime.strptime(compare_date, '%Y-%m-%d')
-            if input_date <= comparison_date:
-                return False  # The start date must be after the offer date
-
+        # Ensure year is 2021 or 2022
+        if input_date.year not in [2021, 2022]:
+            return False
+        # If there's a compare_date, check if input_date is after it
+        if compare_date and input_date <= datetime.strptime(compare_date, '%Y-%m-%d'):
+            return False
         return True
     except ValueError:
         return False
