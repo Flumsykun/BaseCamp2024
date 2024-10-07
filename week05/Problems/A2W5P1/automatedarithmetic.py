@@ -44,9 +44,11 @@ def arithmetic_operation(arithmetic_type):
             print(mistake)
 
 
-# Ask the user for the type of arithmetic operation
-arithmetic_type = input(
-    "Arithmetic operation (summation, multiplication, subtraction): ").lower()
+# Entry point for the script
+if __name__ == "__main__":
+    # Ask the user for the type of arithmetic operation
+    arithmetic_type = input(
+        "Arithmetic operation (summation, multiplication, subtraction): ").lower()
 
-# Run the arithmetic operation function
-arithmetic_operation(arithmetic_type)
+    # Run the arithmetic operation function
+    arithmetic_operation(arithmetic_type)
