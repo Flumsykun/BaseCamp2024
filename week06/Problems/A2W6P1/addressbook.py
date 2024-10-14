@@ -1,40 +1,157 @@
-# Create an application that manages contacts in an addressbook.
+import json
+import re
 
-# Menu structure:
-# [L] List contacts
-# [A] Add contact
-# [R] Remove contact
-# [M] Merge contacts
-# [Q] Quit program
-# Criteria:
-# Add a contact with first name and last name (only alphabet), multiple (unique) e-mails (containing at least one '@'), multiple (unique) phone numbers (only digits).
-# Also, an ID should be generated which should be 1 higher than the highest current ID.
-# Remove a contact by ID.
-# List all contacts sorted by first_name in descending order.
-# Merge duplicate contacts (when choosing [M] Merge contacts). Contacts with the exact same full name (first and last name combined) should be merged.
-# The e-mails and phone numbers of the duplicate contacts should be added to the the first duplicate contact (contact with the highest ID).
-# The other duplicate contcts should be deleted from the addressbook.
-# Contacts are read from the provided JSON file and should be updated with new or removed contacts.
-# Input example (add):
-# A
-# Firstname: John
-# Lastname: Doe
-# Emails: john@doe.com, john.doe@private.com
-# Phonenumbers: 0612345678, 010-1234567
-# Output example ([A] add):
-# Contact added to addressbook
+ADDRESSBOOK_FILE = "contacts.json"
 
-# Output example ([L] list contacts):
-# ======================================
-# Position:  1
-# First name:  John
-# Last name:  Doe
-# Emails:  john@doe.com, john.doe@private.com
-# Phone numbers:  0612345678, 010-1234567
-# ======================================
-# Position: 2
-# First name: Peter
-# Last name: Parker
-# Emails: peter@parker.me
-# Phone numbers: 0677345678
-# ....
+# Helper functions
+
+
+def load_contacts():
+    """Load contacts from the file."""
+    try:
+        with open(ADDRESSBOOK_FILE, "r") as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+
+def save_contacts(contacts):
+    """Save contacts to the file."""
+    with open(ADDRESSBOOK_FILE, "w") as file:
+        json.dump(contacts, file, indent=4)
+
+
+def generate_id(contacts):
+    """Generate a new ID for the contact."""
+    if contacts:
+        return max(contact["id"] for contact in contacts) + 1
+    return 1
+
+
+def validate_name(name):
+    """Validate that the name contains only alphabetic characters."""
+    return name.isalpha()
+
+
+def validate_emails(emails):
+    """Validate emails format (at least one '@')."""
+    return all(re.match(r"[^@]+@[^@]+\.[^@]+", email) for email in emails)
+
+
+def validate_phone_numbers(phone_numbers):
+    """Validate phone numbers contain only digits."""
+    return all(re.match(r"^\d+$", re.sub(r"[-\s]", "", number)) for number in phone_numbers)
+
+
+def list_contacts(contacts):
+    """List all contacts sorted by first name in descending order."""
+    contacts_sorted = sorted(
+        contacts, key=lambda x: x['first_name'], reverse=True)
+    for idx, contact in enumerate(contacts_sorted, 1):
+        print("="*38)
+        print(f"Position:  {idx}")
+        print(f"First name:  {contact['first_name']}")
+        print(f"Last name:  {contact['last_name']}")
+        print(f"Emails:  {', '.join(contact['emails'])}")
+        print(f"Phone numbers:  {', '.join(contact['phone_numbers'])}")
+    print("="*38)
+
+
+def add_contact(contacts):
+    """Add a new contact."""
+    first_name = input("Firstname: ").strip()
+    last_name = input("Lastname: ").strip()
+
+    if not (validate_name(first_name) and validate_name(last_name)):
+        print("Invalid name. First and last names must contain only alphabetic characters.")
+        return
+
+    emails = [email.strip() for email in input(
+        "Emails (comma separated): ").split(',')]
+    if not validate_emails(emails):
+        print("Invalid email format.")
+        return
+
+    phone_numbers = [number.strip() for number in input(
+        "Phone numbers (comma separated): ").split(',')]
+    if not validate_phone_numbers(phone_numbers):
+        print("Invalid phone number format.")
+        return
+
+    new_contact = {
+        "id": generate_id(contacts),
+        "first_name": first_name,
+        "last_name": last_name,
+        "emails": list(set(emails)),  # Ensure emails are unique
+        # Ensure phone numbers are unique
+        "phone_numbers": list(set(phone_numbers))
+    }
+
+    contacts.append(new_contact)
+    save_contacts(contacts)
+    print("Contact added to addressbook.")
+
+
+def remove_contact(contacts):
+    """Remove a contact by ID."""
+    try:
+        contact_id = int(input("Enter contact ID to remove: ").strip())
+        contacts = [
+            contact for contact in contacts if contact['id'] != contact_id]
+        save_contacts(contacts)
+        print(f"Contact with ID {contact_id} removed.")
+    except ValueError:
+        print("Invalid ID.")
+
+
+def merge_contacts(contacts):
+    """Merge contacts with the same first and last names."""
+    contacts_dict = {}
+
+    for contact in contacts:
+        full_name = f"{contact['first_name']} {contact['last_name']}".lower()
+        if full_name in contacts_dict:
+            # Merge email and phone numbers into the first found contact
+            primary_contact = contacts_dict[full_name]
+            primary_contact['emails'] = list(
+                set(primary_contact['emails'] + contact['emails']))
+            primary_contact['phone_numbers'] = list(
+                set(primary_contact['phone_numbers'] + contact['phone_numbers']))
+        else:
+            contacts_dict[full_name] = contact
+
+    # Keep only unique contacts (merge duplicates)
+    merged_contacts = list(contacts_dict.values())
+    save_contacts(merged_contacts)
+    print("Contacts merged.")
+
+
+def main():
+    contacts = load_contacts()
+
+    while True:
+        print("\nMenu:")
+        print("[L] List contacts")
+        print("[A] Add contact")
+        print("[R] Remove contact")
+        print("[M] Merge contacts")
+        print("[Q] Quit program")
+        choice = input("Choose an option: ").upper()
+
+        if choice == 'L':
+            list_contacts(contacts)
+        elif choice == 'A':
+            add_contact(contacts)
+        elif choice == 'R':
+            remove_contact(contacts)
+        elif choice == 'M':
+            merge_contacts(contacts)
+        elif choice == 'Q':
+            print("Exiting program.")
+            break
+        else:
+            print("Invalid choice. Please choose again.")
+
+
+if __name__ == "__main__":
+    main()
