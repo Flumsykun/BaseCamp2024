@@ -72,6 +72,7 @@ def process_dataset(file_path):
     for valid_row in valid_rows:
         print(valid_row)
 
+    # Output corrupted rows with reasons
     print("\n### CORRUPT LINES ###")
     for corrupt_row in corrupt_rows:
         print(corrupt_row)
