@@ -1,51 +1,55 @@
-
 import csv
 import re
 from datetime import datetime
 
-# Function to validate student data
+# Function to validate the student number
 
 
-def validate_student_data(student_data):
-    valid_rows = []
-    corrupted_rows = []
+def validate_student_number(student_number):
+    return bool(re.match(r'^0[89]\d{5}$', student_number))
 
-    for row in student_data:
-        student_number, first_name, last_name, dob, study_program = row
+# Function to validate names (first and last)
 
-        invalid_data = []
 
-        # Validate student number
-        if not re.match(r'^0[89]\d{6}$', student_number):
-            invalid_data.append('Invalid student number')
+def validate_name(name):
+    return bool(re.match(r'^[A-Za-z]+$', name))
 
-        # Validate first name and last name
-        if not (first_name.isalpha() and last_name.isalpha()):
-            invalid_data.append('Invalid name(s)')
+# Function to validate date of birth (YYYY-MM-DD)
 
-        # Validate date of birth
-        try:
-            dob_date = datetime.strptime(dob, '%Y-%m-%d')
-            if not (1960 <= dob_date.year <= 2004 and 1 <= dob_date.month <= 12 and 1 <= dob_date.day <= 31):
-                invalid_data.append('Invalid date of birth')
-        except ValueError:
-            invalid_data.append('Invalid date of birth format')
 
-        # Validate study program
-        if study_program not in ['INF', 'TINF', 'CMD', 'AI']:
-            invalid_data.append('Invalid study program')
+def validate_dob(dob):
+    try:
+        date_obj = datetime.strptime(dob, '%Y-%m-%d')
+        return 1960 <= date_obj.year <= 2004
+    except ValueError:
+        return False
 
-        # Check for empty values
-        if '' in row:
-            invalid_data.append('Empty value(s)')
+# Function to validate the study program
 
-        if invalid_data:
-            corrupted_rows.append(
-                row + ['INVALID DATA: ' + ', '.join(invalid_data)])
-        else:
-            valid_rows.append(row)
 
-    return valid_rows, corrupted_rows
+def validate_study_program(program):
+    return program in ['INF', 'TINF', 'CMD', 'AI']
+
+# Function to validate all data in a row
+
+
+def validate_data(row):
+    student_number, first_name, last_name, dob, study_program = row
+    invalid_data = []
+
+    # Validate each field
+    if not validate_student_number(student_number):
+        invalid_data.append(student_number)
+    if not validate_name(first_name):
+        invalid_data.append(first_name)
+    if not validate_name(last_name):
+        invalid_data.append(last_name)
+    if not validate_dob(dob):
+        invalid_data.append(dob)
+    if not validate_study_program(study_program):
+        invalid_data.append(study_program)
+
+    return invalid_data
 
 # Function to load CSV data
 
@@ -53,7 +57,7 @@ def validate_student_data(student_data):
 def load_data(filename):
     with open(filename, mode='r') as file:
         reader = csv.reader(file)
-        headers = next(reader)  # Skip headers
+        next(reader)  # Skip headers
         student_data = [row for row in reader]
     return student_data
 
@@ -62,15 +66,27 @@ def load_data(filename):
 
 def process_student_data(filename):
     student_data = load_data(filename)
-    valid_rows, corrupted_rows = validate_student_data(student_data)
+    valid_rows = []
+    corrupted_rows = []
 
+    for row in student_data:
+        invalid_data = validate_data(row)
+        if invalid_data:
+            # Add the row and details about invalid fields
+            corrupted_rows.append(
+                row + ['INVALID DATA: ' + ', '.join(invalid_data)])
+        else:
+            valid_rows.append(row)
+
+    # Output valid rows
     print("### VALID LINES ###")
-    for row in valid_rows:
-        print(','.join(row))
+    for valid_row in valid_rows:
+        print(valid_row)
 
+    # Output corrupted rows with reasons
     print("\n### CORRUPT LINES ###")
-    for row in corrupted_rows:
-        print(','.join(row))
+    for corrupt_row in corrupted_rows:
+        print(corrupt_row)
 
 
 # Example usage
