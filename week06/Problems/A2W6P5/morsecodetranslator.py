@@ -1,16 +1,16 @@
+# Dictionary to map letters and numbers to Morse code
 morse_code = {
-    "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".",
-    "F": "..-.", "G": "--.", "H": "....", "I": "..", "J": ".---",
-    "K": "-.-", "L": ".-..", "M": "--", "N": "-.", "O": "---",
-    "P": ".--.", "Q": "--.-", "R": ".-.", "S": "...", "T": "-",
-    "U": "..-", "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--",
-    "Z": "--..", "1": ".----", "2": "..---", "3": "...--", "4": "....-",
-    "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----.",
-    "0": "-----", " ": "   ", ".": ".-.-.-", ",": "--..--", "?": "..--..",
-    "'": ".----.", "!": "-.-.--", "/": "-..-.", "(": "-.--.", ")": "-.--.-",
-    "&": ".-...", "-": "-....-", "=": "-...-", "+": ".-.-.", "@": ".--.-.",
-    ":": "---...", ";": "-.-.-.", '"': ".-..-.", "$": "...-..-", "_": "..--.-"
+    "A": ".-", "B": "-...", "C": "-.-.", "D": "-..", "E": ".", "F": "..-.", "G": "--.", "H": "....",
+    "I": "..", "J": ".---", "K": "-.-", "L": ".-..", "M": "--", "N": "-.", "O": "---", "P": ".--.",
+    "Q": "--.-", "R": ".-.", "S": "...", "T": "-", "U": "..-", "V": "...-", "W": ".--", "X": "-..-",
+    "Y": "-.--", "Z": "--..", "1": ".----", "2": "..---", "3": "...--", "4": "....-", "5": ".....",
+    "6": "-....", "7": "--...", "8": "---..", "9": "----.", "0": "-----",
+    " ": "   ", ".": ".-.-.-", ",": "--..--", "?": "..--..", "!": "-.-.--", "@": ".--.-.",
+    "'": ".----.", "/": "-..-.", "-": "-....-", "(": "-.--.", ")": "-.--.-"
 }
+
+# Reverse dictionary for converting from Morse to text
+reverse_morse_code = {v: k for k, v in morse_code.items()}
 
 
 def message_to_morse(message):
@@ -20,34 +20,45 @@ def message_to_morse(message):
         if char in morse_code:
             morse_code_list.append(morse_code[char])
         else:
-            return f"Can't convert char [{char}] if there is no mapping for specific characters."
+            return f"Can't convert char [{char}]"
+
+    # Join Morse code characters for each word with single space, words with triple space
     return ' '.join(morse_code_list)
 
 
 def morse_to_message(morse_input):
     """Converts Morse code to a text message."""
-    reverse_morse_code = {
-        v: k for k, v in morse_code.items()}  # Reverse the Morse code dictionary
-    message_list = []
-    words = morse_input.split('   ')  # Words are separated by 3 spaces
+    words = morse_input.split("   ")  # Split by 3 spaces (words)
+    decoded_message = []
 
     for word in words:
-        chars = word.split(' ')  # Characters are separated by 1 space
-        message_list.append(
-            ''.join(reverse_morse_code.get(char, '') for char in chars))
+        letters = word.split()  # Split by single space (letters in a word)
+        decoded_word = []
 
-    return ' '.join(message_list)
+        for letter in letters:
+            if letter in reverse_morse_code:
+                decoded_word.append(reverse_morse_code[letter])
+            else:
+                return f"Can't convert Morse sequence [{letter}]"
+
+        decoded_message.append("".join(decoded_word))
+
+    # Join decoded words with a single space
+    return " ".join(decoded_message)
 
 
 def translate_text(text):
-    """Translates text to or from Morse code based on its format."""
-    if all(c in '.- ' for c in text):  # If text only contains Morse code characters
+    """Automatically detects if the input is text or Morse code and translates accordingly."""
+    text = text.strip()
+    # If the input contains dots or dashes only, treat as Morse
+    if all(char in ".- " for char in text):
         return morse_to_message(text)
     else:
         return message_to_morse(text)
 
 
 if __name__ == "__main__":
-    morse_text = input("Enter text or morse code: ")
-    result = translate_text(morse_text)
-    print(result)
+    # Interactive user input
+    morse_input = input("Enter text or morse code: ")
+    morse_result = translate_text(morse_input)
+    print(morse_result)
