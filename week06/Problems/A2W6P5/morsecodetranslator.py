@@ -61,4 +61,4 @@ if __name__ == "__main__":
     # Interactive user input
     user_input = input("Enter text or morse code: ")
     user_result = translate_text(user_input)
-    print(user_result)
+    print(user_result)  # Print the result directly without additional prompts
