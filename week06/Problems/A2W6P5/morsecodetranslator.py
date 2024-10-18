@@ -21,7 +21,6 @@ def message_to_morse(message):
 
     return ' '.join(morse_code)
 
-
 def morse_to_message(morse_code):
     """Converts Morse code to a text message."""
     morse_dict = {value: key for key, value in message_to_morse().items()}
