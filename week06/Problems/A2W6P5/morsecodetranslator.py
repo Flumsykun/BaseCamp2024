@@ -8,7 +8,11 @@ def message_to_morse(message):
         "U": "..-", "V": "...-", "W": ".--", "X": "-..-", "Y": "-.--",
         "Z": "--..", "1": ".----", "2": "..---", "3": "...--", "4": "....-",
         "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----.",
-        "0": "-----", " ": "   "  # 3 spaces for word separation
+        "0": "-----", " ": "   ",  # 3 spaces for word separation
+        "?": "..--..", ",": "--..--", ".": ".-.-.-", "!": "-.-.--",  # Punctuation
+        "'": ".----.", "-": "-....-", "/": "-..-.", "(": "-.--.", ")": "-.--.-",
+        "&": ".-...", ":": "---...", ";": "-.-.-.", "=": "-...-", "+": ".-.-.",
+        "_": "..--.-", "\"": ".-..-.", "$": "...-..-", "@": ".--.-."
     }
 
     morse_code = []
@@ -21,15 +25,26 @@ def message_to_morse(message):
 
     return ' '.join(morse_code)
 
+
 def morse_to_message(morse_code):
     """Converts Morse code to a text message."""
-    morse_dict = {value: key for key, value in message_to_morse().items()}
+    morse_dict = {
+        ".-": "A", "-...": "B", "-.-.": "C", "-..": "D", ".": "E",
+        "..-.": "F", "--.": "G", "....": "H", "..": "I", ".---": "J",
+        "-.-": "K", ".-..": "L", "--": "M", "-.": "N", "---": "O",
+        ".--.": "P", "--.-": "Q", ".-.": "R", "...": "S", "-": "T",
+        "..-": "U", "...-": "V", ".--": "W", "-..-": "X", "-.--": "Y",
+        "--..": "Z", ".----": "1", "..---": "2", "...--": "3", "....-": "4",
+        ".....": "5", "-....": "6", "--...": "7", "---..": "8", "----.": "9",
+        "-----": "0", "..--..": "?", "--..--": ",", ".-.-.-": ".", "-.-.--": "!",
+        "   ": " "  # 3 spaces for word separation
+    }
 
     message = []
-    words = morse_code.split('   ')
+    words = morse_code.split('   ')  # Split by 3 spaces (word separator)
 
     for word in words:
-        chars = word.split(' ')
+        chars = word.split(' ')  # Split by single spaces (character separator)
         message.append(''.join(morse_dict.get(char, '') for char in chars))
 
     return ' '.join(message)
@@ -47,8 +62,14 @@ def translate_text(text, direction="to_morse"):
 
 
 if __name__ == "__main__":
-    text = input()
-    direction = input("Enter 'to_morse' or 'from_morse': ")
+    # For testing purposes, we remove interactive input and provide example cases
+    test_cases = [
+        ("Hello World", "to_morse"),
+        (".... . .-.. .-.. ---    .-- --- .-. .-.. -..", "from_morse"),
+        ("SOS? Yes, or no.", "to_morse"),
+        ("... --- ... ..--..    -.-- . ... --..--    --- .-.    -. --- .-.-.-", "from_morse"),
+    ]
 
-    result = translate_text(text, direction)
-    print(result)
+    for text, direction in test_cases:
+        result = translate_text(text, direction)
+        print(f"Input: {text} | Direction: {direction} | Output: {result}")
