@@ -22,17 +22,17 @@ def message_to_morse(message):
         else:
             return f"Can't convert char [{char}]"
 
-    # Join Morse code characters for each word with single space, words with triple space
+    # Join Morse code characters with a single space
     return ' '.join(morse_code_list)
 
 
 def morse_to_message(morse_input):
     """Converts Morse code to a text message."""
-    words = morse_input.split("   ")  # Split by 3 spaces (words)
+    words = morse_input.split("   ")  # Split by 3 spaces (for words)
     decoded_message = []
 
     for word in words:
-        letters = word.split()  # Split by single space (letters in a word)
+        letters = word.split()  # Split by single space (for letters in a word)
         decoded_word = []
 
         for letter in letters:
@@ -47,18 +47,18 @@ def morse_to_message(morse_input):
     return " ".join(decoded_message)
 
 
-def translate_text(text):
+def translate_text(input_text):
     """Automatically detects if the input is text or Morse code and translates accordingly."""
-    text = text.strip()
+    input_text = input_text.strip()
     # If the input contains dots or dashes only, treat as Morse
-    if all(char in ".- " for char in text):
-        return morse_to_message(text)
+    if all(char in ".- " for char in input_text):
+        return morse_to_message(input_text)
     else:
-        return message_to_morse(text)
+        return message_to_morse(input_text)
 
 
 if __name__ == "__main__":
     # Interactive user input
-    morse_input = input("Enter text or morse code: ")
-    morse_result = translate_text(morse_input)
-    print(morse_result)
+    user_input = input("Enter text or morse code: ")
+    user_result = translate_text(user_input)
+    print(user_result)
