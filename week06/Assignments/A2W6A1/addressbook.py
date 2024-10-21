@@ -147,7 +147,7 @@ def main():
         choice = input("Choose an option: ").upper()
 
         if choice == 'L':
-            display(contacts)
+            list_contacts(contacts)
         elif choice == 'A':
             add_contact(contacts)
         elif choice == 'R':
