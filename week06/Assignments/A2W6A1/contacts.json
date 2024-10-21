@@ -1,0 +1,9 @@
+[
+    {
+        "id": 1,
+        "first_name": "Clark",
+        "last_name": "Kent",
+        "emails": ["clark@kent.private", "c.kent@dailyplanet.work"],
+        "phone_numbers": ["0881234567", "0101234567"]
+    }
+]

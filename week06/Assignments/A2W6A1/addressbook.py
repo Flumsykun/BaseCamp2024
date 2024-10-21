@@ -45,7 +45,8 @@ def validate_phone_numbers(phone_numbers):
 
 def list_contacts(contacts):
     """List all contacts sorted by first name in descending order."""
-    contacts_sorted = sorted(contacts, key=lambda x: x['first_name'], reverse=True)
+    contacts_sorted = sorted(
+        contacts, key=lambda x: x['first_name'], reverse=True)
 
     print("\n=====================================")
     for idx, contact in enumerate(contacts_sorted, 1):
@@ -66,12 +67,14 @@ def add_contact(contacts):
         print("Invalid name. First and last names must contain only alphabetic characters.")
         return
 
-    emails = [email.strip() for email in input("Emails (comma separated): ").split(',')]
+    emails = [email.strip() for email in input(
+        "Emails (comma separated): ").split(',')]
     if not validate_emails(emails):
         print("Invalid email format.")
         return
 
-    phone_numbers = [number.strip() for number in input("Phone numbers (comma separated): ").split(',')]
+    phone_numbers = [number.strip() for number in input(
+        "Phone numbers (comma separated): ").split(',')]
     if not validate_phone_numbers(phone_numbers):
         print("Invalid phone number format.")
         return
@@ -81,7 +84,8 @@ def add_contact(contacts):
         "first_name": first_name,
         "last_name": last_name,
         "emails": list(set(emails)),  # Ensure emails are unique
-        "phone_numbers": list(set(phone_numbers))  # Ensure phone numbers are unique
+        # Ensure phone numbers are unique
+        "phone_numbers": list(set(phone_numbers))
     }
 
     contacts.append(new_contact)
@@ -93,7 +97,8 @@ def remove_contact(contacts):
     """Remove a contact by ID."""
     try:
         contact_id = int(input("Enter contact ID to remove: ").strip())
-        updated_contacts = [contact for contact in contacts if contact['id'] != contact_id]
+        updated_contacts = [
+            contact for contact in contacts if contact['id'] != contact_id]
         if len(updated_contacts) == len(contacts):
             print(f"No contact with ID {contact_id} found.")
         else:
@@ -112,8 +117,10 @@ def merge_contacts(contacts):
         if full_name in contacts_dict:
             # Merge email and phone numbers into the first found contact
             primary_contact = contacts_dict[full_name]
-            primary_contact['emails'] = list(set(primary_contact['emails'] + contact['emails']))
-            primary_contact['phone_numbers'] = list(set(primary_contact['phone_numbers'] + contact['phone_numbers']))
+            primary_contact['emails'] = list(
+                set(primary_contact['emails'] + contact['emails']))
+            primary_contact['phone_numbers'] = list(
+                set(primary_contact['phone_numbers'] + contact['phone_numbers']))
         else:
             contacts_dict[full_name] = contact
 
@@ -123,7 +130,7 @@ def merge_contacts(contacts):
     print("Contacts merged.")
 
 
-def main():
+def display_main():
     contacts = load_contacts()
 
     while True:
