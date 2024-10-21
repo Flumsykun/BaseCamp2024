@@ -9,5 +9,16 @@
         "phone_numbers": [
             "0881234567"
         ]
+    },
+    {
+        "id": 2,
+        "first_name": "Joe",
+        "last_name": "Mama",
+        "emails": [
+            "j.mama@obama.nl"
+        ],
+        "phone_numbers": [
+            "088126739"
+        ]
     }
 ]

@@ -47,49 +47,60 @@ def list_contacts(contacts):
     """List all contacts sorted by first name in descending order."""
     contacts_sorted = sorted(
         contacts, key=lambda x: x['first_name'], reverse=True)
+
+    print("\n=====================================")
     for idx, contact in enumerate(contacts_sorted, 1):
-        print("="*38)
-        print(f"Position:  {idx}")
-        print(f"First name:  {contact['first_name']}")
-        print(f"Last name:  {contact['last_name']}")
-        print(f"Emails:  {', '.join(contact['emails'])}")
-        print(f"Phone numbers:  {', '.join(contact['phone_numbers'])}")
-    print("="*38)
+        print(f"Position: {idx}")
+        print(f"First name: {contact['first_name']}")
+        print(f"Last name: {contact['last_name']}")
+        print(f"Emails: {', '.join(contact['emails'])}")
+        print(f"Phone numbers: {', '.join(contact['phone_numbers'])}")
+    print("=====================================")
 
 
 def add_contact(contacts):
     """Add a new contact."""
-    first_name = input("Firstname: ").strip()
-    last_name = input("Lastname: ").strip()
+    print("Menu:")
+    print("[L] List contacts")
+    print("[A] Add contact")
+    print("[R] Remove contact")
+    print("[M] Merge contacts")
+    print("[Q] Quit program")
+    choice = input("Choose an option: ").upper()
 
-    if not (validate_name(first_name) and validate_name(last_name)):
-        print("Invalid name. First and last names must contain only alphabetic characters.")
-        return
+    if choice == 'A':
+        first_name = input("Firstname: ").strip()
+        last_name = input("Lastname: ").strip()
 
-    emails = [email.strip() for email in input(
-        "Emails (comma separated): ").split(',')]
-    if not validate_emails(emails):
-        print("Invalid email format.")
-        return
+        if not (validate_name(first_name) and validate_name(last_name)):
+            print(
+                "Invalid name. First and last names must contain only alphabetic characters.")
+            return
 
-    phone_numbers = [number.strip() for number in input(
-        "Phone numbers (comma separated): ").split(',')]
-    if not validate_phone_numbers(phone_numbers):
-        print("Invalid phone number format.")
-        return
+        emails = [email.strip() for email in input(
+            "Emails (comma separated): ").split(',')]
+        if not validate_emails(emails):
+            print("Invalid email format.")
+            return
 
-    new_contact = {
-        "id": generate_id(contacts),
-        "first_name": first_name,
-        "last_name": last_name,
-        "emails": list(set(emails)),  # Ensure emails are unique
-        # Ensure phone numbers are unique
-        "phone_numbers": list(set(phone_numbers))
-    }
+        phone_numbers = [number.strip() for number in input(
+            "Phone numbers (comma separated): ").split(',')]
+        if not validate_phone_numbers(phone_numbers):
+            print("Invalid phone number format.")
+            return
 
-    contacts.append(new_contact)
-    save_contacts(contacts)
-    print("Contact added to addressbook.")
+        new_contact = {
+            "id": generate_id(contacts),
+            "first_name": first_name,
+            "last_name": last_name,
+            "emails": list(set(emails)),  # Ensure emails are unique
+            # Ensure phone numbers are unique
+            "phone_numbers": list(set(phone_numbers))
+        }
+
+        contacts.append(new_contact)
+        save_contacts(contacts)
+        print("Contact added to addressbook.")
 
 
 def remove_contact(contacts):
