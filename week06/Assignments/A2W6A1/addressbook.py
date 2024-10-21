@@ -1,19 +1,31 @@
 import json
 import re
 
-ADDRESSBOOK_FILE = "contacts.json"
+import os
+
+# Define the address book file path
+# Get the directory of the current script
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Combine the base directory with the file name
+ADDRESSBOOK_FILE = os.path.join(BASE_DIR, "contacts.json")
 
 # Helper functions
 
 
 def load_contacts():
-    """Load contacts from the file or use a default list."""
+    """Load contacts from the file."""
     try:
         with open(ADDRESSBOOK_FILE, "r") as file:
-            return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
+            print("Loading contacts from file...")
+            contacts = json.load(file)
+            print("Contacts loaded successfully.✔.")
+            return contacts
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print("Error loading contacts:", e)
         # Use a default list if the file doesn't exist or has errors
-        return []
+        default_contacts = []
+        save_contacts(default_contacts)
+        return default_contacts
 
 
 def save_contacts(contacts):
