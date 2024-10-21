@@ -13,10 +13,7 @@ def load_contacts():
             return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         # Use a default list if the file doesn't exist or has errors
-        return [
-            {"id": 1, "first_name": "Clark", "last_name": "Kent", "emails": [
-                "clark@kent.private", "c.kent@dailyplanet.work"], "phone_numbers": ["0881234567", "0101234567"]}
-        ]
+        return []
 
 
 def save_contacts(contacts):

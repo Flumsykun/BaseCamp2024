@@ -5,5 +5,62 @@
         "last_name": "Kent",
         "emails": ["clark@kent.private", "c.kent@dailyplanet.work"],
         "phone_numbers": ["0881234567", "0101234567"]
+    },
+    {
+        "id": 2,
+        "first_name": "Bruce",
+        "last_name": "Wayne",
+        "emails": ["bruce.wayne@dc.com"],
+        "phone_numbers": ["0891234567"]
+    },
+    {
+        "id": 3,
+        "first_name": "Diana",
+        "last_name": "Prince",
+        "emails": ["diana.prince@dc.com"],
+        "phone_numbers": ["0891234567"]
+    },
+    {
+        "id": 4,
+        "first_name": "Barry",
+        "last_name": "Allen",
+        "emails": ["barry.allen@dc.com"],
+        "phone_numbers": ["0891234567"]
+    },
+    {
+        "id": 5,
+        "first_name": "Hal",
+        "last_name": "Jordan",
+        "emails": ["hal.jordan@dc.com"],
+        "phone_numbers": ["0891234567"]
+    },
+    {
+        "id": 6,
+        "first_name": "Michael",
+        "last_name": "Jackson",
+        "emails": ["michael.jackson@dc.com"],
+        "phone_numbers": ["0891234567"]
+    },
+    {
+        "id": 7,
+        "first_name": "Tony",
+        "last_name": "Stark",
+        "emails": ["tony.stark@dc.com"],
+        "phone_numbers": ["0891234567"]
+    },
+    {
+        "id": 8,
+        "first_name": "Steve",
+        "last_name": "Rogers",
+        "emails": ["steve.rogers@dc.com"],
+        "phone_numbers": ["0891234567"]
+    },
+    {
+        "id": 9,
+        "first_name": "King of Pop",
+        "last_name": "Michael Jackson",
+        "emails": ["mjjprodcutions@dc.com"],
+        "phone_numbers": ["0891234567"]
     }
+
 ]
