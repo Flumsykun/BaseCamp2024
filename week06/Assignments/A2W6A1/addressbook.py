@@ -7,12 +7,16 @@ ADDRESSBOOK_FILE = "contacts.json"
 
 
 def load_contacts():
-    """Load contacts from the file."""
+    """Load contacts from the file or use a default list."""
     try:
         with open(ADDRESSBOOK_FILE, "r") as file:
             return json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
-        return []
+        # Use a default list if the file doesn't exist or has errors
+        return [
+            {"id": 1, "first_name": "Clark", "last_name": "Kent", "emails": [
+                "clark@kent.private", "c.kent@dailyplanet.work"], "phone_numbers": ["0881234567", "0101234567"]}
+        ]
 
 
 def save_contacts(contacts):
@@ -130,7 +134,7 @@ def merge_contacts(contacts):
     print("Contacts merged.")
 
 
-def display_main():
+def main():
     contacts = load_contacts()
 
     while True:
@@ -143,7 +147,7 @@ def display_main():
         choice = input("Choose an option: ").upper()
 
         if choice == 'L':
-            list_contacts(contacts)
+            display(contacts)
         elif choice == 'A':
             add_contact(contacts)
         elif choice == 'R':
