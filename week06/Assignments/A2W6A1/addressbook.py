@@ -1,17 +1,12 @@
 import json
 import re
-
 import os
 
 # Define the address book file path
-# Get the directory of the current script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# Combine the base directory with the file name
 ADDRESSBOOK_FILE = os.path.join(BASE_DIR, "contacts.json")
 
 # Helper functions
-
-
 def load_contacts():
     """Load contacts from the file."""
     try:
@@ -22,17 +17,14 @@ def load_contacts():
             return contacts
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print("Error loading contacts:", e)
-        # Use a default list if the file doesn't exist or has errors
         default_contacts = []
         save_contacts(default_contacts)
         return default_contacts
-
 
 def save_contacts(contacts):
     """Save contacts to the file."""
     with open(ADDRESSBOOK_FILE, "w") as file:
         json.dump(contacts, file, indent=4)
-
 
 def generate_id(contacts):
     """Generate a new ID for the contact."""
@@ -40,26 +32,22 @@ def generate_id(contacts):
         return max(contact["id"] for contact in contacts) + 1
     return 1
 
-
 def validate_name(name):
     """Validate that the name contains only alphabetic characters."""
     return name.isalpha()
-
 
 def validate_emails(emails):
     """Validate emails format (at least one '@')."""
     return all(re.match(r"[^@]+@[^@]+\.[^@]+", email) for email in emails)
 
-
 def validate_phone_numbers(phone_numbers):
     """Validate phone numbers contain only digits."""
     return all(re.match(r"^\d+$", re.sub(r"[-\s]", "", number)) for number in phone_numbers)
 
-
 def list_contacts(contacts):
     """List all contacts sorted by first name in descending order."""
     contacts_sorted = sorted(
-        contacts, key=lambda x: x['first_name'], reverse=True)
+        contacts, key=lambda x: x['first_name'].lower(), reverse=True)
 
     print("\n=====================================")
     for idx, contact in enumerate(contacts_sorted, 1):
@@ -69,7 +57,6 @@ def list_contacts(contacts):
         print(f"Emails: {', '.join(contact['emails'])}")
         print(f"Phone numbers: {', '.join(contact['phone_numbers'])}")
     print("=====================================")
-
 
 def add_contact(contacts):
     """Add a new contact."""
@@ -96,15 +83,13 @@ def add_contact(contacts):
         "id": generate_id(contacts),
         "first_name": first_name,
         "last_name": last_name,
-        "emails": list(set(emails)),  # Ensure emails are unique
-        # Ensure phone numbers are unique
+        "emails": list(set(emails)),
         "phone_numbers": list(set(phone_numbers))
     }
 
     contacts.append(new_contact)
     save_contacts(contacts)
     print("Contact added to addressbook.")
-
 
 def remove_contact(contacts):
     """Remove a contact by ID."""
@@ -120,7 +105,6 @@ def remove_contact(contacts):
     except ValueError:
         print("Invalid ID.")
 
-
 def merge_contacts(contacts):
     """Merge contacts with the same first and last names."""
     contacts_dict = {}
@@ -128,7 +112,6 @@ def merge_contacts(contacts):
     for contact in contacts:
         full_name = f"{contact['first_name']} {contact['last_name']}".lower()
         if full_name in contacts_dict:
-            # Merge email and phone numbers into the first found contact
             primary_contact = contacts_dict[full_name]
             primary_contact['emails'] = list(
                 set(primary_contact['emails'] + contact['emails']))
@@ -137,11 +120,9 @@ def merge_contacts(contacts):
         else:
             contacts_dict[full_name] = contact
 
-    # Keep only unique contacts (merge duplicates)
     merged_contacts = list(contacts_dict.values())
     save_contacts(merged_contacts)
     print("Contacts merged.")
-
 
 def main():
     contacts = load_contacts()
@@ -168,7 +149,6 @@ def main():
             break
         else:
             print("Invalid choice. Please choose again.")
-
 
 if __name__ == "__main__":
     main()
