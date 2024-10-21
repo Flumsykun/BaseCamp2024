@@ -69,8 +69,8 @@ def list_contacts(contacts):
 
 def add_contact(contacts):
     """Add a new contact."""
-    first_name = input("Firstname: ").strip()
-    last_name = input("Lastname: ").strip()
+    first_name = input("Firstname: ").strip().lower()
+    last_name = input("Lastname: ").strip().lower()
 
     if not (validate_name(first_name) and validate_name(last_name)):
         print("Invalid name. First and last names must contain only alphabetic characters.")
