@@ -19,7 +19,7 @@ def load_txt_file(file_name):
 
             temperatures_for_year[year][month].append(temperature)
 
-    return temperatures_for_year  
+    return temperatures_for_year
 
 
 def fahrenheit_to_celsius(fahrenheit: float) -> float:
@@ -73,8 +73,8 @@ def coldest_month_of_year(temperatures: dict, year: int) -> str:
 
 def month_name(month_num: int) -> str:
     """Geef de volledige maandnaam op basis van een maandnummer."""
-    import calendar
-    return calendar.month_name[month_num]
+    return ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"][month_num - 1]
 
 
 def average_temp_month_per_year(temperatures: dict) -> list:
