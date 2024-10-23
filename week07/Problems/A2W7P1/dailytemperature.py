@@ -1,6 +1,7 @@
 import os
 import sys
 
+
 def load_txt_file(file_name):
     """Load temperatures from a text file into a structured format."""
     temperatures_for_year = {}
