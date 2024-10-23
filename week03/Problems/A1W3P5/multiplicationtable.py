@@ -12,14 +12,14 @@
 # 2  2  4  6  8 10 12 14 16 18 20
 # ...
 
-#print the header row (numbers 1 through 10)
-print("   ", end="") #print 3 spaces
+# print the header row (numbers 1 through 10)
+print("   ", end="")  # print 3 spaces
 for i in range(1, 11):
-    print(f"{i:3}", end="") #print the number with 3 spaces
-print() #print a newline
+    print(f"{i:3}", end="")  # print the number with 3 spaces
+print()  # print a newline
 
 for row in range(1, 11):
-    print(f"{row:2}", end="") #print the row number with 2 spaces
+    print(f"{row:2}", end="")  # print the row number with 2 spaces
     for col in range(1, 11):
-        print(f"{row * col:3}", end="") #print the product with 3 spaces
-    print() #print a newline
+        print(f"{row * col:3}", end="")  # print the product with 3 spaces
+    print()  # print a newline
