@@ -54,11 +54,12 @@ def validate_phone_numbers(phone_numbers):
 
 def list_contacts(contacts):
     """List all contacts sorted by first name in descending order."""
-    contacts_sorted = sorted(
-        contacts, key=lambda x: x['first_name'].lower(), reverse=True)
+    # contacts_sorted = sorted(
+    #     contacts, key=lambda x: x['first_name'].lower(), reverse=True)
+    contacts.sort(key=lambda x: x['first_name'])
 
     print("\n=====================================")
-    for idx, contact in enumerate(contacts_sorted, 1):
+    for idx, contact in enumerate(contacts, 1):
         print(f"Position: {idx}")
         print(f"First name: {contact['first_name']}")
         print(f"Last name: {contact['last_name']}")
