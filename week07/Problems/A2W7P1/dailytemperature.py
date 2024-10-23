@@ -43,7 +43,7 @@ def average_temp_per_year(temperatures: dict) -> list:
         total_temp = sum(sum(temps) for temps in months.values())
         total_days = sum(len(temps) for temps in months.values())
         avg_temp = total_temp / total_days if total_days > 0 else 0
-        yearly_averages.append((year, avg_temp))
+        yearly_averages.append((year, round(avg_temp, 2)))
     return yearly_averages
 
 
@@ -116,14 +116,18 @@ def main_menu(temperatures):
                 print(f"{year}: {avg_temp:.2f}°C")
         elif choice == '3':
             warmest, coldest = warmest_and_coldest_year(temperatures)
-            print(f"Warmest year: {warmest[0]} with average {warmest[1]:.2f}°F")
-            print(f"Coldest year: {coldest[0]} with average {coldest[1]:.2f}°F")
+            print(
+                f"Warmest year: {warmest[0]} with average {warmest[1]:.2f}°F")
+            print(
+                f"Coldest year: {coldest[0]} with average {coldest[1]:.2f}°F")
         elif choice == '4':
             year = int(input("Enter the year: "))
-            print(f"Warmest month in {year}: {warmest_month_of_year(temperatures, year)}")
+            print(
+                f"Warmest month in {year}: {warmest_month_of_year(temperatures, year)}")
         elif choice == '5':
             year = int(input("Enter the year: "))
-            print(f"Coldest month in {year}: {coldest_month_of_year(temperatures, year)}")
+            print(
+                f"Coldest month in {year}: {coldest_month_of_year(temperatures, year)}")
         elif choice == '6':
             result = average_temp_month_per_year(temperatures)
             for year, month_avg in result:
