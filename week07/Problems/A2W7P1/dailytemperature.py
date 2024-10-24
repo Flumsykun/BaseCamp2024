@@ -41,7 +41,8 @@ def average_temp_per_year(temperatures: dict) -> list:
     for year, months in temperatures.items():
         total_temp = sum(sum(temps) for temps in months.values())
         total_days = sum(len(temps) for temps in months.values())
-        yearly_averages.append((year, total_temp / total_days))
+        avg_temp = total_temp / total_days
+        yearly_averages.append((year, round(avg_temp, 2)))
     return yearly_averages
 
 
@@ -98,7 +99,12 @@ def main_menu(temperatures):
         print("[6] Print average temperatures per month in Celsius")
         print("[Q] Quit")
 
-        choice = input("Choose an option: ").upper()
+        while True:
+            choice = input("Choose an option: ").upper()
+            if choice in ['1', '2', '3', '4', '5', '6', 'Q']:
+                break
+            else:
+                print("Invalid option. Please try again.")
 
         if choice == '1':
             yearly_averages = average_temp_per_year(temperatures)
