@@ -41,8 +41,7 @@ def average_temp_per_year(temperatures: dict) -> list:
     for year, months in temperatures.items():
         total_temp = sum(sum(temps) for temps in months.values())
         total_days = sum(len(temps) for temps in months.values())
-        avg_temp = total_temp / total_days
-        yearly_averages.append((year, round(avg_temp, 2)))
+        yearly_averages.append((year, total_temp / total_days))
     return yearly_averages
 
 
