@@ -9,9 +9,10 @@ def calculate_fare(distance):
         distance_meters -= 140
         fare = 4 + amount * 0.25
 
-    print(f"Total fare: {round(fare, 2)} EUR")
+    return round(fare, 2)
 
 
 if __name__ == "__main__":
     distance = float(input("Enter distance traveled: "))
     calculate_fare(distance)
+    print(calculate_fare(distance))
