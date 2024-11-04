@@ -7,7 +7,7 @@ def load_txt_file(file_name):
     temperatures_for_year = {}
     with open(os.path.join(sys.path[0], file_name), newline='', encoding="utf8") as file_obj:
         for line in file_obj.readlines():
-            month, day, year, temperature = line.split()  # unpack into 4 variables
+            month, day, year, temperature = line.split()
             year = int(year)
             month = int(month)
             temperature = float(temperature)
@@ -87,57 +87,51 @@ def average_temp_month_per_year(temperatures: dict) -> list:
         return result
 
 
-def main_menu(temperatures):
+def main_menu():
     """Hoofdmenu voor gebruikersinterface"""
-    while True:
-        print("\n[1] Print average temperatures per year (Fahrenheit)")
-        print("[2] Print average temperatures per year (Celsius)")
-        print("[3] Print the warmest and coldest year based on the average temperature")
-        print("[4] Print the warmest month of a year")
-        print("[5] Print the coldest month of a year")
-        print("[6] Print average temperatures per month in Celsius")
-        print("[Q] Quit")
+    print("\n[1] Print average temperatures per year (Fahrenheit)")
+    print("[2] Print average temperatures per year (Celsius)")
+    print("[3] Print the warmest and coldest year based on the average temperature")
+    print("[4] Print the warmest month of a year")
+    print("[5] Print the coldest month of a year")
+    print("[6] Print average temperatures per month in Celsius")
+    print("[Q] Quit")
 
-        while True:
-            choice = input("Choose an option: ").upper()
-            if choice in ['1', '2', '3', '4', '5', '6', 'Q']:
-                break
-            else:
-                print("Invalid option. Please try again.")
 
-        if choice == '1':
-            yearly_averages = average_temp_per_year(temperatures)
-            for year, avg_temp in yearly_averages:
-                print(f"{year}: {avg_temp:.2f}°F")
-        elif choice == '2':
-            yearly_averages = average_temp_per_year(temperatures)
-            for year, avg_temp in yearly_averages:
-                print(f"{year}: {fahrenheit_to_celsius(avg_temp):.2f}°C")
-        elif choice == '3':
-            warmest, coldest = warmest_and_coldest_year(temperatures)
-            print(
-                f"Warmest year: {warmest[0]} with average {warmest[1]:.2f}°F")
-            print(
-                f"Coldest year: {coldest[0]} with average {coldest[1]:.2f}°F")
-        elif choice == '4':
-            year = int(input("Enter the year: "))
-            print(
-                f"Warmest month in {year}: {warmest_month_of_year(temperatures, year)}")
-        elif choice == '5':
-            year = int(input("Enter the year: "))
-            print(
-                f"Coldest month in {year}: {coldest_month_of_year(temperatures, year)}")
-        elif choice == '6':
-            result = average_temp_month_per_year(temperatures)
-            for year, month_avg in result:
-                print(f"{year}: {month_avg}")
-        elif choice == 'Q':
-            print("Exiting program.")
-            break
-        else:
-            print("Invalid option. Please try again.")
+def main(temperatures):
+    choice = input("Enter your choice: ").strip()
+
+    if choice == '1':
+        yearly_averages = average_temp_per_year(temperatures)
+        for year, avg_temp in yearly_averages:
+            print(f"{year}, {avg_temp:.3f}")
+    elif choice == '2':
+        yearly_averages = average_temp_per_year(temperatures)
+        for year, avg_temp in yearly_averages:
+            print(f"{year}, {fahrenheit_to_celsius(avg_temp):.3f}")
+    elif choice == '3':
+        warmest, coldest = warmest_and_coldest_year(temperatures)
+        print(f"Warmest year {warmest[0]} with average {warmest[1]:.3f}")
+        print(f"Coldest year {coldest[0]} with average {coldest[1]:.3f}")
+    elif choice == '4':
+        year = int(input("Enter the year: "))
+        print(
+            f"Warmest month in {year}: {warmest_month_of_year(temperatures, year)}")
+    elif choice == '5':
+        year = int(input("Enter the year: "))
+        print(
+            f"Coldest month in {year}: {coldest_month_of_year(temperatures, year)}")
+    elif choice == '6':
+        result = average_temp_month_per_year(temperatures)
+        for year, month_avg in result:
+            print(f"{year}, {month_avg}")
+    elif choice.upper() == 'Q':
+        print("Exiting program.")
+    else:
+        print("Invalid option. Please try again.")
 
 
 if __name__ == '__main__':
     temperatures = load_txt_file('NLAMSTDM.txt')
-    main_menu(temperatures)
+    # main_menu()
+    main(temperatures)
