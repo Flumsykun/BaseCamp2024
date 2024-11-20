@@ -7,6 +7,7 @@ def main():
         sys.exit(1)
 
     filename = sys.argv[1]
+    print("Processing file:", filename)
 
     try:
         with open(filename, 'r') as file:
