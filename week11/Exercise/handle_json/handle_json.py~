@@ -45,3 +45,4 @@ def write_json_file_with_json_dumps(data: list):
 def write_json_file_with_json_dump(data: list):
     with open("newfile.json", "w") as jsonfile:
         json.dump(data, jsonfile, indent=4)
+        jsonfile.close()

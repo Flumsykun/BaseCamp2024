@@ -56,7 +56,7 @@ def test_write_json_file_with_json_dumps():
         assert jsonfile.read() == content
 
 
-def write_json_file_with_json_dump(data: list):
+def test_write_json_file_with_json_dump(data: list):
     write_json_file_with_json_dump(data)
     with open("newfile.json", "r") as jsonfile:
         assert jsonfile.read() == content
