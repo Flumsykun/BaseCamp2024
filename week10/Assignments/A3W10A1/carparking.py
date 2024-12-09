@@ -3,13 +3,13 @@ from datetime import datetime
 
 
 class CarParkingMachine:
-    def __init__(self, machine_id, capacity=10, hourly_rate=2.50):
+    def __init__(self, id, capacity=10, hourly_rate=2.50):
         """Initialize the parking machine with a machine ID, capacity, and hourly rate."""
-        self.machine_id = machine_id
+        self.machine_id = id
         self.capacity = capacity
         self.hourly_rate = hourly_rate
         self.parked_cars = {}  # Tracks cars: {license_plate: ParkedCar object}
-        self.logger = CarParkingLogger(machine_id)  # Initialize logger
+        self.logger = CarParkingLogger(id)  # Initialize logger
         self.load_parked_cars()  # Load non-checked-out cars from the log file
 
     def check_in(self, license_plate, check_in=None):
