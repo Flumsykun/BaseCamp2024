@@ -21,7 +21,6 @@ class CarParkingMachine:
         if check_in is None:
             check_in = datetime.now()
         self.parked_cars[license_plate] = ParkedCar(license_plate, check_in)
-        self.logger.log_check_in(license_plate)  # Log the check-in
         return True  # Successfully checked in
 
     def check_out(self, license_plate):
