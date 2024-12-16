@@ -1,29 +1,33 @@
-import os
-import sys
 import csv
+import os
 
 
-# Load the csv file
 def load_data(filename):
-    with open("bannedvideogames.csv", "r") as file:
+    with open(filename, "r", newline='', encoding='utf-8') as file:
         reader = csv.DictReader(file)
-        print(reader.fieldnames)
         return list(reader)
 
-# Save the csv file
-def save_data(filename: str, data: list) -> None:
-    with open("bannedvideogames.csv", "w") as file:
-        writer = csv.writer(file)
-        writer.writerows(data)
+
+def save_data(filename, data):
+    fieldnames = ['Id', 'Game', 'Series', 'Country', 'Details', 'Ban Category',
+                  'Ban Status', 'Wikipedia Profile', 'Image', 'Summary', 'Developer',
+                  'Publisher', 'Genre', 'Homepage']
+    sanitized_data = []
+    for row in data:
+        sanitized_row = {key: row.get(key, "") for key in fieldnames}
+        sanitized_data.append(sanitized_row)
+
+    with open(filename, "w", newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(sanitized_data)
 
 
-# Count banned games in israel
 def count_banned_in_israel(data):
-    return sum(1 for game in data if game['Country'] == 'Israel')
+    return sum(1 for game in data if game['Country'].lower() == 'israel')
 
 
-# count country with the most bans
-def country_with_most_bans(data: list) -> dict:
+def country_with_most_bans(data):
     country_count = {}
     for game in data:
         country = game['Country']
@@ -31,87 +35,71 @@ def country_with_most_bans(data: list) -> dict:
     return max(country_count, key=country_count.get)
 
 
-# Count how many Assassin's Creed games are banned
-def count_assassins_creed_banned(data: list) -> int:
-    banned_games = set()
-    for game in data:
-        if game['Series'] == ['Assassin\'s Creed']:
-            banned_games.add(game['Title'])
-        return len(banned_games)
+def count_assassins_creed_banned(data):
+    return len({game['Game'] for game in data if game['Series'].lower() == "assassin's creed"})
 
 
-# Show all games banned in germany
-def games_banned_in_germany(data: list) -> list:
-    return [game for game in data if game['Country'] == 'Germany']
-
-# Show all games in banned in Australia
-def games_banned_in_australia(data: list) -> list:
-    return [game for game in data if game['Country'] == 'Australia']
-
-# Show all countries where Red Dead Redemption is banned
-def red_dead_banned_details(data: list) -> list:
-    return [game for game in data if game['Game'] == 'Red Dead Redemption']
+def games_banned_in_germany(data):
+    return [game for game in data if game['Country'].lower() == 'germany']
 
 
-# Game modification extras
-def remove_germany_records(data: list) -> list:
-    return [game for game in data if game['Country'] != 'Germany']
+def red_dead_banned_details(data):
+    return [game for game in data if game['Game'].lower() == 'red dead redemption']
 
 
-# Rename Silent Hill VI to Silent Hill Remastered
+def remove_germany_records(data):
+    return [game for game in data if game['Country'].lower() != 'germany']
+
+
 def rename_silent_hill(data):
     for game in data:
-        if game['Game'] == 'Silent Hill VI':
+        if game['Game'].lower() == 'silent hill vi':
             game['Game'] = 'Silent Hill Remastered'
 
 
-# Lift the ban on Bully in Brazil
 def lift_bully_ban(data):
     for game in data:
-        if game['Name'] == 'Bully' and game['Country'] == 'Brazil':
-            game['Status'] = 'Ban Lifted'
+        if game['Game'].lower() == 'bully' and game['Country'].lower() == 'brazil':
+            game['Ban Status'] = 'Ban Lifted'
 
 
-# Change the genre of Manhunt II to Action
 def change_manhunt_genre(data):
     for game in data:
-        if game['Name'] == 'Manhunt II':
+        if game['Game'].lower() == 'manhunt ii':
             game['Genre'] = 'Action'
 
 
-# Add a new game to the list
 def add_new_game(data):
-    keys = ['id', 'name', 'series', 'country', 'details', 'category', 'status', 'wikipedia', 'image', 'summary',
-            'developer', 'publisher', 'genre', 'homepage']
-    new_game = {key: input(f"Enter {key}: ") for key in keys}
+    fieldnames = ['Id', 'Game', 'Series', 'Country', 'Details', 'Ban Category', 'Ban Status', 'Wikipedia Profile',
+                  'Image', 'Summary', 'Developer', 'Publisher', 'Genre', 'Homepage']
+    new_game = {field: input(f"Enter {field}: ") for field in fieldnames}
     data.append(new_game)
 
 
-# Overview of Banned Games per Country
 def overview_by_country(data):
     country_games = {}
     for game in data:
-        country = game['country']
-        if country not in country_games:
-            country_games[country] = []
-        country_games[country].append(game['name'])
-
+        country = game['Country']
+        country_games.setdefault(country, []).append(game['Game'])
     for country, games in country_games.items():
         print(f"{country} - {len(games)}")
         for game in games:
             print(f"- {game}")
 
 
-# Search the dataset by country
 def search_by_country(data, country):
-    for game in data:
-        if game['country'].lower() == country.lower():
-            print(f"{game['name']} - {game['details']}")
+    results = [game for game in data if game['Country'].lower() == country.lower()]
+    for game in results:
+        print(f"{game['Game']} - {game['Details']}")
 
 
 def main():
     filename = 'bannedvideogames.csv'
-    data = load_data(filename)
+    if not os.path.exists(filename):
+        print("File not found.")
+        return
+
+    game_data = load_data(filename)
 
     while True:
         print("[I] Print request info from assignment")
@@ -124,32 +112,33 @@ def main():
         choice = input("Enter your choice: ").strip().upper()
 
         if choice == 'I':
-            print(f"Games banned in Israel: {count_banned_in_israel(data)}")
-            print(f"Country with most bans: {country_with_most_bans(data)}")
-            print(f"Assassin's Creed games banned: {count_assassins_creed_banned(data)}")
-            print("Games banned in Germany:")
-            for game in games_banned_in_germany(data):
-                print(game)
-            print("Red Dead Redemption banned details:")
-            for game in red_dead_banned_details(data):
-                print(game)
+            print(count_banned_in_israel(game_data))
+            print(country_with_most_bans(game_data))
+            print(count_assassins_creed_banned(game_data))
+
+            saudi_games = [game for game in game_data if 'saudi' in game['Country'].lower()]
+            emirates_games = [game for game in game_data if 'emirates' in game['Country'].lower()]
+
+            for game in saudi_games:
+                print(f"{game['Game']} - {game['Details']}")
+            for game in emirates_games:
+                print(f"{game['Game']} - {game['Details']}")
         elif choice == 'M':
-            data = remove_germany_records(data)
-            rename_silent_hill(data)
-            lift_bully_ban(data)
-            change_manhunt_genre(data)
-            save_data(filename, data)
+            game_data = remove_germany_records(game_data)
+            rename_silent_hill(game_data)
+            lift_bully_ban(game_data)
+            change_manhunt_genre(game_data)
+            save_data(filename, game_data)
         elif choice == 'A':
-            add_new_game(data)
-            save_data(filename, data)
+            add_new_game(game_data)
+            save_data(filename, game_data)
         elif choice == 'O':
-            overview_by_country(data)
+            overview_by_country(game_data)
         elif choice == 'S':
             country = input("Enter country to search: ")
-            search_by_country(data, country)
+            search_by_country(game_data, country)
         elif choice == 'Q':
-            save_data(filename, data)
-            print("Exiting program.")
+            save_data(filename, game_data)
             break
         else:
             print("Invalid choice. Please try again.")
