@@ -1,0 +1,4 @@
+16-12-2024 12:43:06;cpm_name=2;license_plate=HH-495-B;action=check-in
+16-12-2024 12:45:31;cpm_name=<built-in function id>;license_plate=AA-123-B;action=check-in
+16-12-2024 12:45:31;cpm_name=<built-in function id>;license_plate=AA-123-B;action=check-out;parking_fee=2.5
+16-12-2024 12:45:31;cpm_name=<built-in function id>;license_plate=AA-123-B;action=check-in

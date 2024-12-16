@@ -1,28 +1,66 @@
 import sqlite3
-import json
 
 
 # read json file
-def read_file_as_data_with_json_load() -> list:
-    content = []
-    with open('metatopos-places.json') as jsonfile:
-        content = json.load(jsonfile)
-    return content
+# def read_file_as_data_with_json_load() -> list:
+#     content = []
+#     with open('metatopos-places.json') as jsonfile:
+#         content = json.load(jsonfile)
+#     return content
 
 
-def dict_factory(cursor, row):
-    names = [column[0] for column in cursor.description]
-    return dict(zip(names, row))
+# def dict_factory(cursor, row):
+#     names = [column[0] for column in cursor.description]
+#     return dict(zip(names, row))
 
 
-database = sqlite3.connect("metatopos.db")
-database.row_factory = dict_factory
-query = """INSERT
-INTO place (code, name, pcstart, pcend)
-VALUES(?, ?, ?, ?)"""
-places = database.execute(query,[9999,"Shibuya",3090,3099])
-database.commit()
-print(places)
+# def create_postcodes_table(conn: sqlite3.Connection) -> None:
+#     cur = conn.cursor()
+#     cur.execute('''
+#         CREATE TABLE IF NOT EXISTS postcodes (
+#             postcode TEXT PRIMARY KEY,
+#             latitude REAL,
+#             longitude REAL
+#         )
+#     ''')
+
+def main() -> None:
+    # Connect to the database
+    conn = sqlite3.connect('postcodes.db')
+    cur = conn.cursor()
+
+    # Create the table
+    cur.execute('''
+        CREATE TABLE IF NOT EXISTS postcodes (
+            postcode TEXT PRIMARY KEY,
+            latitude REAL,
+            longitude REAL
+        )
+    ''')
+
+    # Insert a new postcode into the table
+    new_postcode = {'postcode': 'GLHZ', 'latitude': 2222, 'longitude': 2222}
+    cur.execute('SELECT * FROM postcodes WHERE postcode = ?', (new_postcode['postcode'],))
+    if cur.fetchone() is None:
+        cur.execute('''
+            INSERT INTO postcodes (postcode, latitude, longitude)
+            VALUES (?, ?, ?)
+        ''', (new_postcode['postcode'], new_postcode['latitude'], new_postcode['longitude']))
+        print(f"Inserted postcode {new_postcode['postcode']}")
+    else:
+        print(f"Postcode {new_postcode['postcode']} already exists")
+
+    # Print out all the postcodes in the table
+    cur.execute('SELECT * FROM postcodes')
+    for row in cur.fetchall():
+        print(row)
+
+    conn.commit()
+    conn.close()
+
+
+if __name__ == '__main__':
+    main()
 
 # ([{=============================================================================================}])
 

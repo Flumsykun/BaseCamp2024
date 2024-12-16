@@ -6,7 +6,7 @@ from carparking import CarParkingMachine, ParkedCar
 class TestCarParkingMachine(unittest.TestCase):
     def setUp(self):
         """Set up a fresh CarParkingMachine instance for each test."""
-        self.parking_machine = CarParkingMachine(capacity=2, hourly_rate=2.50)
+        self.parking_machine = CarParkingMachine("test_machine", capacity=2, hourly_rate=2.50)
 
     def test_check_in_success(self):
         """Test a successful car check-in."""
