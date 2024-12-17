@@ -3,7 +3,6 @@ import json
 import os
 from datetime import datetime
 
-
 def report_parked_cars(machine_id, from_date, to_date):
     """
     Generate a report of parked cars for a specific machine within a date range.
@@ -20,6 +19,10 @@ def report_parked_cars(machine_id, from_date, to_date):
     json_file = f"{machine_id}_state.json"
     output_file = f"parkedcars_{machine_id}.csv"
 
+    # Check if the output file already exists and delete it to avoid write issues
+    if os.path.exists(output_file):
+        os.remove(output_file)
+
     # Open CSV file to write the report
     with open(output_file, "w", newline="") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
@@ -33,10 +36,9 @@ def report_parked_cars(machine_id, from_date, to_date):
                     check_in = datetime.strptime(car["check_in"], "%Y-%m-%d %H:%M:%S")
                     # Include cars parked within the date range
                     if from_date <= check_in <= to_date:
-                      check_out = "None"
-                      parking_fee = 0.0
-                      writer.writerow([car["license_plate"], car["check_in"], check_out, f"{parking_fee:.1f}"])
-
+                        check_out = "None"
+                        parking_fee = 0.0
+                        writer.writerow([car["license_plate"], car["check_in"], check_out, f"{parking_fee:.1f}"])
     print(f"Report generated: {output_file}")
 
 def report_total_fees(from_date, to_date):
@@ -52,6 +54,11 @@ def report_total_fees(from_date, to_date):
     """
     # Define the output file for the total fees report
     output_file = "total_parking_fees.csv"
+
+    # Check if the output file already exists and delete it to avoid write issues
+    if os.path.exists(output_file):
+        os.remove(output_file)
+
     total_fees = {}
 
     # Iterate through all JSON state files to calculate fees
@@ -64,7 +71,6 @@ def report_total_fees(from_date, to_date):
                 cars = json.load(f)
                 for car in cars:
                     check_in = datetime.strptime(car["check_in"], "%Y-%m-%d %H:%M:%S")
-                    # Include fees only within the date range
                     if from_date <= check_in <= to_date:
                         total_fees[machine_id] += 5.0  # Replace with proper fee calculation
 
@@ -74,47 +80,42 @@ def report_total_fees(from_date, to_date):
         writer.writerow(["car_parking_machine", "total_parking_fee"])
         for machine, fee in total_fees.items():
             writer.writerow([machine, f"{fee:.1f}"])
-
     print(f"Report generated: {output_file}")
 
-
-# Menu
 def main():
     """
-       Main menu for generating parking reports.
-       Users can choose to report parked cars or total collected fees.
+    Main menu for generating parking reports.
+    Users can choose to report parked cars or total collected fees.
     """
-    inputs = {"P": {"machine_id": "South", "from_date": "10-11-2022", "to_date": "12-11-2022"},
-        "F": {"from_date": "10-11-2022", "to_date": "12-11-2022"}}
-    try:
-        # Predefined test choice
-        choice = "P"  # Default to P for testing
+    while True:
+        # Display the menu options
         print("\n[P] Report all parked cars during a parking period for a specific parking machine")
         print("[F] Report total collected parking fee during a parking period for all parking machines")
         print("[Q] Quit program")
 
+        # Get user choice
+        choice = input("Choice: ").strip().upper()
+
         if choice == "P":
-            # Use pre-defined inputs
-            machine_id = inputs["P"]["machine_id"]
-            from_date = datetime.strptime(inputs["P"]["from_date"], "%d-%m-%Y")
-            to_date = datetime.strptime(inputs["P"]["to_date"], "%d-%m-%Y")
+            # Get inputs for parked cars report
+            machine_id = input("Machine ID: ").strip()
+            from_date = datetime.strptime(input("From (DD-MM-YYYY): "), "%d-%m-%Y")
+            to_date = datetime.strptime(input("To (DD-MM-YYYY): "), "%d-%m-%Y")
             report_parked_cars(machine_id, from_date, to_date)
 
         elif choice == "F":
-            # Use pre-defined inputs
-            from_date = datetime.strptime(inputs["F"]["from_date"], "%d-%m-%Y")
-            to_date = datetime.strptime(inputs["F"]["to_date"], "%d-%m-%Y")
+            # Get inputs for total fees report
+            from_date = datetime.strptime(input("From (DD-MM-YYYY): "), "%d-%m-%Y")
+            to_date = datetime.strptime(input("To (DD-MM-YYYY): "), "%d-%m-%Y")
             report_total_fees(from_date, to_date)
 
         elif choice == "Q":
+            # Exit the program
             print("Goodbye!")
+            break
 
-    except EOFError:
-        print("\nNo input provided. Exiting program.")
-    except Exception as e:
-        print(f"Error: {e}")
-
+        else:
+            print("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
-    # report_parked_cars(1, )
     main()
