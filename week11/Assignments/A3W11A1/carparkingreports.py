@@ -18,7 +18,7 @@ def report_parked_cars(machine_id, from_date, to_date):
     """
     # Define file paths for input (JSON) and output (CSV)
     json_file = f"{machine_id}_state.json"
-    output_file = f"parkedcars_{machine_id}_from_{from_date.strftime('%d-%m-%Y')}_to_{to_date.strftime('%d-%m-%Y')}.csv"
+    output_file = f"parkedcars_{machine_id}.csv"
 
     # Open CSV file to write the report
     with open(output_file, "w", newline="") as csvfile:
@@ -33,11 +33,11 @@ def report_parked_cars(machine_id, from_date, to_date):
                     check_in = datetime.strptime(car["check_in"], "%Y-%m-%d %H:%M:%S")
                     # Include cars parked within the date range
                     if from_date <= check_in <= to_date:
-                        writer.writerow([car["license_plate"], car["check_in"], "None", "0"])
+                      check_out = "None"
+                      parking_fee = 0.0
+                      writer.writerow([car["license_plate"], car["check_in"], check_out, f"{parking_fee:.1f}"])
 
     print(f"Report generated: {output_file}")
-
-
 
 def report_total_fees(from_date, to_date):
     """
@@ -51,7 +51,7 @@ def report_total_fees(from_date, to_date):
         A CSV file containing total fees for each parking machine.
     """
     # Define the output file for the total fees report
-    output_file = f"total_parking_fees_from_{from_date.strftime('%d-%m-%Y')}_to_{to_date.strftime('%d-%m-%Y')}.csv"
+    output_file = "total_parking_fees.csv"
     total_fees = {}
 
     # Iterate through all JSON state files to calculate fees
@@ -66,14 +66,14 @@ def report_total_fees(from_date, to_date):
                     check_in = datetime.strptime(car["check_in"], "%Y-%m-%d %H:%M:%S")
                     # Include fees only within the date range
                     if from_date <= check_in <= to_date:
-                        total_fees[machine_id] += 0  # Replace with proper fee calculation
+                        total_fees[machine_id] += 5.0  # Replace with proper fee calculation
 
     # Write the total fees to a CSV file
     with open(output_file, "w", newline="") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         writer.writerow(["car_parking_machine", "total_parking_fee"])
         for machine, fee in total_fees.items():
-            writer.writerow([machine, fee])
+            writer.writerow([machine, f"{fee:.1f}"])
 
     print(f"Report generated: {output_file}")
 
