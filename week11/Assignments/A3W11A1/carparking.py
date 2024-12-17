@@ -95,9 +95,9 @@ class CarParkingLogger:
 
 
 def main_menu():
-    try:
-        machine_id = input("Enter the parking machine ID: ").strip()
-        parking_machine = CarParkingMachine(machine_id)
+        # machine_id = input("Enter the parking machine ID: ").strip()
+        north = "North"
+        parking_machine = CarParkingMachine(north)
 
         while True:
             print("\nMenu:")
@@ -130,8 +130,6 @@ def main_menu():
 
             else:
                 print("Invalid option. Please choose again.")
-    except EOFError:
-        print("\nNo input provided. Exiting program.")
 
 
 if __name__ == "__main__":
