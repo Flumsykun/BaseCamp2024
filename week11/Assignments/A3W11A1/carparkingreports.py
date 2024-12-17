@@ -34,29 +34,33 @@ def report_total_fees(from_date, to_date):
         for machine_file in os.listdir():
             if machine_file.endswith(".json"):
                 machine_id = machine_file.split(".")[0]
-                # Som alle kosten (simpele placeholder)
                 writer.writerow([machine_id, 100.0])
 
 
 # Menu
 def main():
-    while True:
-        print("[P] Report all parked cars during a parking period")
-        print("[F] Report total collected parking fees")
-        print("[Q] Quit")
-        choice = input("Enter your choice: ").strip().upper()
+    try:
+        while True:
+            print("[P] Report all parked cars during a parking period")
+            print("[F] Report total collected parking fees")
+            print("[Q] Quit")
+            choice = input("Enter your choice: ").strip().upper()
 
-        if choice == "P":
-            machine_id = input("Enter machine ID: ").strip()
-            from_date = input("From date (DD-MM-YYYY): ").strip()
-            to_date = input("To date (DD-MM-YYYY): ").strip()
-            report_parked_cars(machine_id, from_date, to_date)
-        elif choice == "F":
-            from_date = input("From date (DD-MM-YYYY): ").strip()
-            to_date = input("To date (DD-MM-YYYY): ").strip()
-            report_total_fees(from_date, to_date)
-        elif choice == "Q":
-            break
+            if choice == "P":
+                machine_id = input("Enter machine ID: ").strip()
+                from_date = input("From date (DD-MM-YYYY): ").strip()
+                to_date = input("To date (DD-MM-YYYY): ").strip()
+                report_parked_cars(machine_id, from_date, to_date)
+            elif choice == "F":
+                from_date = input("From date (DD-MM-YYYY): ").strip()
+                to_date = input("To date (DD-MM-YYYY): ").strip()
+                report_total_fees(from_date, to_date)
+            elif choice == "Q":
+                break
+            else:
+                print("Invalid choice. Please try again.")
+    except EOFError:
+        print("\nNo input provided. Exiting program.")
 
 
 if __name__ == "__main__":

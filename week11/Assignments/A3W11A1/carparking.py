@@ -12,8 +12,9 @@ class CarParkingMachine:
         self.machine_id = id
         self.capacity = capacity
         self.hourly_rate = hourly_rate
-        self.json_file = f"{self.machine_id}.json"
-        self.parked_cars = {}
+        self.json_file = f"{self.machine_id}_state.json"
+        self.parked_cars = {}  # Stores license_plate -> ParkedCar objects
+        self.logger = CarParkingLogger(self.machine_id)  # Add logger instance
         self.load_parked_cars()
         CarParkingMachine.all_parking_machines.append(self)
 
@@ -23,26 +24,29 @@ class CarParkingMachine:
             with open(self.json_file, "r") as file:
                 data = json.load(file)
                 for car in data:
-                    self.parked_cars[car["license_plate"]] = datetime.strptime(car["check_in"], "%Y-%m-%d %H:%M:%S")
+                    self.parked_cars[car["license_plate"]] = ParkedCar(license_plate=car["license_plate"],
+                                                                       check_in=datetime.strptime(car["check_in"],
+                                                                                                  "%Y-%m-%d %H:%M:%S"))
 
     def save_parked_cars(self):
         """Save parked cars to JSON file."""
-        data = [{"license_plate": plate, "check_in": time.strftime("%Y-%m-%d %H:%M:%S")} for plate, time in
-                self.parked_cars.items()]
+        data = [{"license_plate": car.license_plate, "check_in": car.check_in.strftime("%Y-%m-%d %H:%M:%S")} for car in
+                self.parked_cars.values()]
         with open(self.json_file, "w") as file:
             json.dump(data, file, indent=4)
 
     def check_in(self, license_plate, check_in=None):
         """Check if a car can check-in and save state."""
-
+        # Check if the car is already parked in any machine
         for machine in CarParkingMachine.all_parking_machines:
             if license_plate in machine.parked_cars:
                 return False
 
         if len(self.parked_cars) >= self.capacity:
-            return False  # Vol
+            return False  # Capacity reached
         check_in = check_in or datetime.now()
-        self.parked_cars[license_plate] = check_in
+        self.parked_cars[license_plate] = ParkedCar(license_plate, check_in)
+        self.logger.log_check_in(license_plate)  # Log check-in
         self.save_parked_cars()
         return True
 
@@ -50,17 +54,15 @@ class CarParkingMachine:
         """Check out a car, calculate fee, and save state."""
         if license_plate not in self.parked_cars:
             return None
-        fee = self.get_parking_fee(license_plate)
-        del self.parked_cars[license_plate]
+        parked_car = self.parked_cars.pop(license_plate)
         self.save_parked_cars()
+        fee = self.get_parking_fee(parked_car)
+        self.logger.log_check_out(license_plate, fee)  # Log check-out
         return fee
 
-    def get_parking_fee(self, license_plate):
+    def get_parking_fee(self, parked_car):
         """Calculate the parking fee."""
-        if license_plate not in self.parked_cars:
-            return None
-        check_in_time = self.parked_cars[license_plate]
-        duration = datetime.now() - check_in_time
+        duration = datetime.now() - parked_car.check_in
         hours = math.ceil(duration.total_seconds() / 3600)
         return round(min(hours, 24) * self.hourly_rate, 2)
 
@@ -69,9 +71,6 @@ class ParkedCar:
     def __init__(self, license_plate, check_in):
         self.license_plate = license_plate
         self.check_in = check_in
-
-    def __repr__(self):
-        return f"<ParkedCar {self.license_plate} at {self.check_in}>"
 
 
 class CarParkingLogger:
@@ -82,51 +81,17 @@ class CarParkingLogger:
 
     def log_check_in(self, license_plate):
         """Log a car check-in."""
-        timestamp = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = f"{timestamp};cpm_name={self.machine_id};license_plate={license_plate};action=check-in\n"
-        with open(self.log_file, "a") as f:
-            f.write(log_entry)
+        with open(self.log_file, "a") as file:
+            file.write(log_entry)
 
     def log_check_out(self, license_plate, parking_fee):
         """Log a car check-out."""
-        timestamp = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = f"{timestamp};cpm_name={self.machine_id};license_plate={license_plate};action=check-out;parking_fee={parking_fee}\n"
-        with open(self.log_file, "a") as f:
-            f.write(log_entry)
-
-    def get_machine_fee_by_day(self, search_date):
-        """Calculate the total parking fee for this machine on a specific day."""
-        total_fee = 0.0
-        search_date = datetime.strptime(search_date, "%d-%m-%Y").date()
-        with open(self.log_file, "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                parts = line.strip().split(";")
-                if len(parts) >= 5:
-                    timestamp = datetime.strptime(parts[0], "%d-%m-%Y %H:%M:%S")
-                    machine_id = parts[1].split("=")[1]
-                    if machine_id.lower() == self.machine_id.lower() and timestamp.date() == search_date:
-                        action = parts[3].split("=")[1]
-                        if action == "check-out":
-                            fee = float(parts[4].split("=")[1])
-                            total_fee += fee
-        return round(total_fee, 2)
-
-    def get_total_car_fee(self, license_plate):
-        """Calculate the total fee for a specific car across all machines."""
-        total_fee = 0.0
-        with open(self.log_file, "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                parts = line.strip().split(";")
-                if len(parts) >= 5:
-                    plate = parts[2].split("=")[1]
-                    if plate == license_plate:
-                        action = parts[3].split("=")[1]
-                        if action == "check-out":
-                            fee = float(parts[4].split("=")[1])
-                            total_fee += fee
-        return round(total_fee, 2)
+        with open(self.log_file, "a") as file:
+            file.write(log_entry)
 
 
 def main_menu():

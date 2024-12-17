@@ -1,13 +1,10 @@
 import unittest
 from datetime import datetime, timedelta
 from carparking import CarParkingMachine, ParkedCar
-import os
 
 
 class TestCarParkingMachine(unittest.TestCase):
     def setUp(self):
-        if os.path.exists("carparklog.txt"):
-            os.remove("carparklog.txt")
         self.parking_machine = CarParkingMachine("test_machine", capacity=2, hourly_rate=2.50)
 
     def test_check_in_success(self):
