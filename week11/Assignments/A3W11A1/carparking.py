@@ -25,13 +25,20 @@ class CarParkingMachine:
                 data = json.load(file)
                 for car in data:
                     self.parked_cars[car["license_plate"]] = ParkedCar(license_plate=car["license_plate"],
-                                                                       check_in=datetime.strptime(car["check_in"],
-                                                                                                  "%m-%d-%Y %H:%M:%S"))
+                        check_in=datetime.strptime(car["check_in"], "%m-%d-%Y %H:%M:%S"),
+                        check_out=datetime.strptime(car["check_out"], "%m-%d-%Y %H:%M:%S") if car[
+                            "check_out"] else None, )
 
     def save_parked_cars(self):
         """Save parked cars to JSON file."""
-        data = [{"license_plate": car.license_plate, "check_in": car.check_in.strftime("%m-%d-%Y %H:%M:%S")} for car in
-                self.parked_cars.values()]
+        data = [
+            {
+                "license_plate": car.license_plate,
+                "check_in": car.check_in.strftime("%m-%d-%Y %H:%M:%S"),
+                "check_out": car.check_out.strftime("%m-%d-%Y %H:%M:%S") if car.check_out else None,
+            }
+            for car in self.parked_cars.values()
+        ]
         with open(self.json_file, "w") as file:
             json.dump(data, file, indent=4)
 
@@ -54,10 +61,12 @@ class CarParkingMachine:
         """Check out a car, calculate fee, and save state."""
         if license_plate not in self.parked_cars:
             return None
-        parked_car = self.parked_cars.pop(license_plate)
+        parked_car = self.parked_cars[license_plate]
+        parked_car.check_out = datetime.now()  # Update the check_out field
         self.save_parked_cars()
         fee = self.get_parking_fee(parked_car)
         self.logger.log_check_out(license_plate, fee)  # Log check-out
+        del self.parked_cars[license_plate]  # Remove car after saving
         return fee
 
     def get_parking_fee(self, parked_car):
@@ -68,16 +77,17 @@ class CarParkingMachine:
 
 
 class ParkedCar:
-    def __init__(self, license_plate, check_in):
+    def __init__(self, license_plate, check_in, check_out=None):
         self.license_plate = license_plate
         self.check_in = check_in
+        self.check_out = check_out
 
 
 class CarParkingLogger:
     def __init__(self, machine_id):
         """Initialize the logger with a machine ID."""
         self.machine_id = machine_id
-        self.log_file = "carparklog.txt"
+        self.log_file = f"{machine_id}_log.txt"
 
     def log_check_in(self, license_plate):
         """Log a car check-in."""
@@ -93,6 +103,11 @@ class CarParkingLogger:
         with open(self.log_file, "a") as file:
             file.write(log_entry)
 
+def initialize_all_parking_machines():
+    for file in os.listdir():
+        if file.endswith("_state.json"):
+            machine_id = file.split("_state.json")[0]
+            CarParkingMachine(machine_id)
 
 def main_menu():
     # machine_id = input("Enter the parking machine ID: ").strip()
