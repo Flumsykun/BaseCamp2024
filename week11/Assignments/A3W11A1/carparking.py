@@ -26,11 +26,11 @@ class CarParkingMachine:
                 for car in data:
                     self.parked_cars[car["license_plate"]] = ParkedCar(license_plate=car["license_plate"],
                                                                        check_in=datetime.strptime(car["check_in"],
-                                                                                                  "%Y-%m-%d %H:%M:%S"))
+                                                                                                  "%m-%d-%Y %H:%M:%S"))
 
     def save_parked_cars(self):
         """Save parked cars to JSON file."""
-        data = [{"license_plate": car.license_plate, "check_in": car.check_in.strftime("%Y-%m-%d %H:%M:%S")} for car in
+        data = [{"license_plate": car.license_plate, "check_in": car.check_in.strftime("%m-%d-%Y %H:%M:%S")} for car in
                 self.parked_cars.values()]
         with open(self.json_file, "w") as file:
             json.dump(data, file, indent=4)
@@ -81,55 +81,55 @@ class CarParkingLogger:
 
     def log_check_in(self, license_plate):
         """Log a car check-in."""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now().strftime("%m-%d-%Y %H:%M:%S")
         log_entry = f"{timestamp};cpm_name={self.machine_id};license_plate={license_plate};action=check-in\n"
         with open(self.log_file, "a") as file:
             file.write(log_entry)
 
     def log_check_out(self, license_plate, parking_fee):
         """Log a car check-out."""
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.now().strftime("%m-%d-%Y %H:%M:%S")
         log_entry = f"{timestamp};cpm_name={self.machine_id};license_plate={license_plate};action=check-out;parking_fee={parking_fee}\n"
         with open(self.log_file, "a") as file:
             file.write(log_entry)
 
 
 def main_menu():
-        # machine_id = input("Enter the parking machine ID: ").strip()
-        north = "North"
-        parking_machine = CarParkingMachine(north)
+    # machine_id = input("Enter the parking machine ID: ").strip()
+    north = "North"
+    parking_machine = CarParkingMachine(north)
 
-        while True:
-            print("\nMenu:")
-            print("[I] Check-in car by license plate")
-            print("[O] Check-out car by license plate")
-            print("[Q] Quit program")
-            choice = input("Choose an option: ").strip().upper()
+    while True:
+        print("\nMenu:")
+        print("[I] Check-in car by license plate")
+        print("[O] Check-out car by license plate")
+        print("[Q] Quit program")
+        choice = input("Choose an option: ").strip().upper()
 
-            if choice == "I":
-                license_plate = input("License: ").strip()
-                if parking_machine.check_in(license_plate):
-                    print("License registered")
-                else:
-                    if len(parking_machine.parked_cars) >= parking_machine.capacity:
-                        print("Capacity reached!")
-                    else:
-                        print("License already checked in!")
-
-            elif choice == "O":
-                license_plate = input("License: ").strip()
-                fee = parking_machine.check_out(license_plate)
-                if fee is None:
-                    print(f"License {license_plate} not found!")
-                else:
-                    print(f"Parking fee: {fee:.2f} EUR")
-
-            elif choice == "Q":
-                print("Goodbye!")
-                break
-
+        if choice == "I":
+            license_plate = input("License: ").strip()
+            if parking_machine.check_in(license_plate):
+                print("License registered")
             else:
-                print("Invalid option. Please choose again.")
+                if len(parking_machine.parked_cars) >= parking_machine.capacity:
+                    print("Capacity reached!")
+                else:
+                    print("License already checked in!")
+
+        elif choice == "O":
+            license_plate = input("License: ").strip()
+            fee = parking_machine.check_out(license_plate)
+            if fee is None:
+                print(f"License {license_plate} not found!")
+            else:
+                print(f"Parking fee: {fee:.2f} EUR")
+
+        elif choice == "Q":
+            print("Goodbye!")
+            break
+
+        else:
+            print("Invalid option. Please choose again.")
 
 
 if __name__ == "__main__":
