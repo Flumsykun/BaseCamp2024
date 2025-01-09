@@ -96,7 +96,6 @@ def report_total_fees(from_date, to_date):
             writer.writerow([machine, f"{fee:.1f}"])
     print(f"Report generated: {output_file}")
 
-
 def update_state_file(machine_id, cars):
     """
     Update the JSON state file for a parking machine.
