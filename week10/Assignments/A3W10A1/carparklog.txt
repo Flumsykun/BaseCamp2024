@@ -1,1 +1,0 @@
-09-12-2024 20:09:26;cpm_name=1;license_plate=HH-494-B;action=check-in
